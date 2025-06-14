@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { XorO, Board } from "./types";
-import { getNewBoard, getWinner } from "./utils";
+import { getNewBoard, getGameResult } from "./utils";
 
 //          Column
 //         0   1   2
@@ -20,41 +20,59 @@ export const Main = () => {
   ]);
 
   const [currentPlayer, setCurrentPlayer] = useState<XorO>("X");
-  const winner = getWinner(board);
+  const { winner, isDraw } = getGameResult(board);
 
+  const handleResetBoard = () => {
+    setBoard([
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+    ]);
+    setCurrentPlayer("X");
+  };
 
-  const handleClick = ({ rowIndex, columnIndex }) => {
-    if (board[rowIndex][columnIndex] || winner) {
+  const handleClick = ({ rowIndex, colIndex }) => {
+    if (board[rowIndex][colIndex] || winner) {
       return;
     }
     const oldBoard = board;
-    const newBoard = getNewBoard(oldBoard, rowIndex, columnIndex, currentPlayer);
+    const newBoard = getNewBoard(oldBoard, rowIndex, colIndex, currentPlayer);
     setBoard(newBoard);
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
-      <div className="font-bold text-2xl">Tic Tac Toe</div>
-      <p> {!winner && `${currentPlayer} to play`}</p>
-      {winner && (
-        <div className="text-2xl font-bold">
-          {winner} wins!
+      <div className="font-bold border-black border-2 px-4 py-2 text-2xl">Tic Tac Toe</div>
+      <div className="h-20">
+        {/* Fixed height status container */}
+        <div className="h-8 flex items-center text-3xl font-bold justify-center mb-6">
+          {!winner && !isDraw && <p className="animate-appear-mark">{currentPlayer} to play</p>}
+          {isDraw && <em className="animate-appear-mark">Draw!</em>}
+          {winner && <p>The winner is: {winner} </p>}
         </div>
-      )}
+      </div>
       <div className="flex flex-col gap-1">
         {board.map((row, rowIndex) => (
           <div className="flex gap-1">
-            {row.map((column, columnIndex) => (
+            {row.map((cell, colIndex) => (
               <div
-                className="flex border-2 border-gray-900 w-10 h-10 cursor-pointer items-center justify-center text-2xl font-bold"
-                onClick={() => handleClick({ rowIndex, columnIndex })}
+                className="flex border-2 border-gray-900 size-20 cursor-pointer items-center justify-center text-2xl font-bold"
+                onClick={() => handleClick({ rowIndex, colIndex })}
               >
-                {column}
+                {cell && <span className="animate-appear-mark">{cell}</span>}
               </div>
             ))}
           </div>
         ))}
       </div>
+      {(winner || isDraw) && (
+        <button
+          className="cursor-pointer border-black border-2 text-black font-bold py-2 px-4 hover:bg-black hover:text-white duration-300"
+          onClick={handleResetBoard}
+        >
+          Reset
+        </button>
+      )}
     </div>
   );
 };

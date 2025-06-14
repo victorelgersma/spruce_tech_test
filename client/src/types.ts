@@ -1,5 +1,11 @@
 export type XorO = 'X' | 'O'
 
 
-export type Cell = XorO | undefined;
-export type Board = Cell[][];
+export interface GameResult {
+  winner: XorO | null;
+  isDraw: boolean;
+}
+
+
+
+export type Board = (XorO | undefined)[][];
