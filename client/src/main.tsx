@@ -1,48 +1,46 @@
 import React, { useState } from "react";
-import { XorO } from "./types";
+import { XorO, Board } from "./types";
+import { getNewBoard, getWinner } from "./utils";
+
+//          Column
+//         0   1   2
+//       ┌───┬───┬───┐
+//     0 │   │   │   │
+//   r   ├───┼───┼───┤
+//   o 1 │   │   │   │
+//   w   ├───┼───┼───┤
+//     2 │   │   │   │
+//       └───┴───┴───┘
 
 export const Main = () => {
-  const [board, setBoard] = useState<(XorO | undefined)[][]>([
+  const [board, setBoard] = useState<Board>([
     [undefined, undefined, undefined],
     [undefined, undefined, undefined],
     [undefined, undefined, undefined],
   ]);
 
-  //          Column
-  //         0   1   2
-  //       ┌───┬───┬───┐
-  //     0 │   │   │   │
-  //   r   ├───┼───┼───┤
-  //   o 1 │   │   │   │
-  //   w   ├───┼───┼───┤
-  //     2 │   │   │   │
-  //       └───┴───┴───┘
-
   const [currentPlayer, setCurrentPlayer] = useState<XorO>("X");
+  const winner = getWinner(board);
+
 
   const handleClick = ({ rowIndex, columnIndex }) => {
-    console.log({ rowIndex, columnIndex });
-    // check if the cell is already occupied
-    if (board[rowIndex][columnIndex]) {
-      console.log("Cell already occupied");
+    if (board[rowIndex][columnIndex] || winner) {
       return;
     }
     const oldBoard = board;
-    const getNewBoard = (oldBoard, rowIndex, columnIndex) => {
-      const newBoard = [...oldBoard];
-      newBoard[rowIndex][columnIndex] = currentPlayer;
-      return newBoard;
-    }
-    const newBoard = getNewBoard(oldBoard, rowIndex, columnIndex);
-
+    const newBoard = getNewBoard(oldBoard, rowIndex, columnIndex, currentPlayer);
     setBoard(newBoard);
-    // switch player
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
       <div className="font-bold text-2xl">Tic Tac Toe</div>
-      <p> Current player: {currentPlayer}</p>
+      <p> {!winner && `${currentPlayer} to play`}</p>
+      {winner && (
+        <div className="text-2xl font-bold">
+          {winner} wins!
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         {board.map((row, rowIndex) => (
           <div className="flex gap-1">
