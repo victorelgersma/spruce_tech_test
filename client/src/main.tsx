@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { XorO, Board } from "./types";
 import { getNewBoard, getGameResult } from "./utils";
 
@@ -43,22 +43,19 @@ export const Main = () => {
 
   function getIsWinningCellOrNot(winningTriple, rowIndex, colIndex) {
     return winningTriple.some(
-      ([row, col]) =>
-        row === rowIndex && col === colIndex
+      ([row, col]) => row === rowIndex && col === colIndex
     );
   }
 
   return (
-    <div className="flex flex-col mt-10 items-center gap-10">
+    <div className={`flex flex-col mt-10 items-center gap-10`}>
       <div className="font-bold border-black border-2 px-4 py-2 text-2xl">
         Tic Tac Toe
       </div>
       <div className="h-20">
         {/* Fixed height status container */}
         <div className="h-8 flex items-center text-3xl font-bold justify-center mb-6">
-          {!winner && !isDraw && (
-            <p className="animate-appear-mark">{currentPlayer} to play</p>
-          )}
+          {!winner && !isDraw && <p>{currentPlayer} to play</p>}
           {isDraw && <em className="animate-appear-mark">Draw!</em>}
           {winner && <p>The winner is: {winner} </p>}
         </div>
@@ -74,12 +71,23 @@ export const Main = () => {
               );
               return (
                 <div
-                  className={`flex border-2 bg-white-500 border-gray-900 size-20 cursor-pointer ${
-                    winner && !isWinningCell && "bg-white border-gray-300"
-                  } items-center justify-center text-2xl font-bold`}
+                  className={`flex border-2 bg-white-500 border-gray-900 size-20 cursor-pointer
+                  ${((winner && !isWinningCell) || isDraw) && "bg-white border-gray-300"}
+                  ${isWinningCell && winner && "border-2 bg-green-300"}
+                  items-center justify-center text-2xl font-bold`}
                   onClick={() => handleClick({ rowIndex, colIndex })}
                 >
-                  {cell && <span className="animate-appear-mark">{cell}</span>}
+                  {cell && (
+                    <span
+                      className={`animate-appear-mark ${
+                        (winner && !isWinningCell) || isDraw
+                          ? "text-gray-300"
+                          : "text-black"
+                      }`}
+                    >
+                      {cell}
+                    </span>
+                  )}
                 </div>
               );
             })}
@@ -91,7 +99,7 @@ export const Main = () => {
           className="cursor-pointer border-black border-2 text-black font-bold py-2 px-4 hover:bg-black hover:text-white duration-300"
           onClick={handleResetBoard}
         >
-          Reset
+          Play Again?
         </button>
       )}
     </div>
