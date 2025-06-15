@@ -18,7 +18,6 @@ function createBoard({ size }): Board {
 }
 
 
-
 export const Main = () => {
   const [preferredSize, setPreferredSize] = useState(3);
   const [board, setBoard] = useState<Board>(
@@ -131,7 +130,6 @@ export const Main = () => {
         </div>
         <button
           className="cursor-pointer border-black border-2 text-black font-bold py-2 px-4 hover:bg-black hover:text-white duration-300"
-          autoFocus={true}
           onClick={handleResetBoard}
         >
           {winner || isDraw ? "Play again" : "Reset board"}
