@@ -17,13 +17,16 @@ function createBoard({ size }): Board {
   return Array.from({ length: size }, () => Array.from({ length: size }));
 }
 
+
+
 export const Main = () => {
   const [preferredSize, setPreferredSize] = useState(3);
   const [board, setBoard] = useState<Board>(
-    createBoard({ size: preferredSize })
+    createBoard({ size: 3 })
   );
   const [currentPlayer, setCurrentPlayer] = useState<XorO>("X");
   const { winner, isDraw, winningTriple } = getGameResult(board);
+
 
   const handleResetBoard = () => {
     if (preferredSize < 3 || preferredSize > 15) {
@@ -33,7 +36,7 @@ export const Main = () => {
     setBoard(createBoard({ size: preferredSize }));
     setCurrentPlayer("X");
   };
-
+  
   const handlePlay = ({ rowIndex, colIndex }) => {
     if (board[rowIndex][colIndex] || winner) {
       return;
@@ -128,6 +131,7 @@ export const Main = () => {
         </div>
         <button
           className="cursor-pointer border-black border-2 text-black font-bold py-2 px-4 hover:bg-black hover:text-white duration-300"
+          autoFocus={true}
           onClick={handleResetBoard}
         >
           {winner || isDraw ? "Play again" : "Reset board"}
