@@ -47,7 +47,7 @@ function isWinningTriple(triple: [number, number][], board: Board): boolean {
   );
 }
 
-function findTriple(board: Board) {
+function findTriple(board: Board) : { winningTriple: [number, number][] | null; XorO: XorO | null } {
   let winningTriple: [number, number][] | null = null;
   let XorO: XorO | null = null;
   const directions = [
@@ -57,8 +57,8 @@ function findTriple(board: Board) {
     { delta_r: 1, delta_c: -1 }, // Diagonal /
   ];
 
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board.length; j++) {
       const currentCell = board[i][j];
       const candidateTriples = getCandidateTriples(i, j, directions);
       const winningTriple = candidateTriples.find((candidateTriple) =>
@@ -76,6 +76,7 @@ export const getGameResult = (board: Board): GameResult => {
   let result: GameResult = { winner: null, isDraw: false, winningTriple: [] };
 
   const { winningTriple, XorO } = findTriple(board);
+  console.log("winningTriple", winningTriple);
   if (winningTriple) {
     result.winner = XorO;
     result.winningTriple = winningTriple;
@@ -85,7 +86,7 @@ export const getGameResult = (board: Board): GameResult => {
   return result;
 };
 
-export const getNewBoard = (oldBoard, rowIndex, columnIndex, currentPlayer) => {
+export const getNewBoard = (oldBoard : Board, rowIndex : number, columnIndex: number, currentPlayer: XorO): Board => {
   const newBoard = [...oldBoard];
   newBoard[rowIndex][columnIndex] = currentPlayer;
   return newBoard;
