@@ -41,10 +41,10 @@ export const Main = () => {
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
 
-  function getIsWinningCellOrNot(winningCoords, cellCoords) {
+  function getIsWinningCellOrNot(winningCoords, rowIndex, colIndex) {
     return winningCoords.some(
       (winningCoord) =>
-        winningCoord[0] === cellCoords[0] && winningCoord[1] === cellCoords[1]
+        winningCoord[0] === rowIndex && winningCoord[1] === colIndex
     );
   }
 
@@ -67,19 +67,15 @@ export const Main = () => {
         {board.map((row, rowIndex) => (
           <div className="flex gap-1">
             {row.map((cell, colIndex) => {
-              const cellCoords = [rowIndex, colIndex];
               const isWinningCell = getIsWinningCellOrNot(
                 winningCoords,
-                cellCoords
+                rowIndex,
+                colIndex
               );
-              console.log("is winning cell?", isWinningCell, {
-                cellCoords,
-                winningCoords,
-              });
               return (
                 <div
-                  className={`flex border-2 border-gray-900 size-20 cursor-pointer ${
-                    isWinningCell && "bg-red-500"
+                  className={`flex border-2 bg-white-500 border-gray-900 size-20 cursor-pointer ${
+                    winner && !isWinningCell && "bg-white border-gray-300"
                   } items-center justify-center text-2xl font-bold`}
                   onClick={() => handleClick({ rowIndex, colIndex })}
                 >
