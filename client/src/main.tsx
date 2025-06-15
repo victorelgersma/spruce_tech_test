@@ -20,7 +20,7 @@ export const Main = () => {
   ]);
 
   const [currentPlayer, setCurrentPlayer] = useState<XorO>("X");
-  const { winner, isDraw } = getGameResult(board);
+  const { winner, isDraw, winningCoords } = getGameResult(board);
 
   const handleResetBoard = () => {
     setBoard([
@@ -40,13 +40,25 @@ export const Main = () => {
     setBoard(newBoard);
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
+
+  function getIsWinningCellOrNot(winningCoords, cellCoords) {
+    return winningCoords.some(
+      (winningCoord) =>
+        winningCoord[0] === cellCoords[0] && winningCoord[1] === cellCoords[1]
+    );
+  }
+
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
-      <div className="font-bold border-black border-2 px-4 py-2 text-2xl">Tic Tac Toe</div>
+      <div className="font-bold border-black border-2 px-4 py-2 text-2xl">
+        Tic Tac Toe
+      </div>
       <div className="h-20">
         {/* Fixed height status container */}
         <div className="h-8 flex items-center text-3xl font-bold justify-center mb-6">
-          {!winner && !isDraw && <p className="animate-appear-mark">{currentPlayer} to play</p>}
+          {!winner && !isDraw && (
+            <p className="animate-appear-mark">{currentPlayer} to play</p>
+          )}
           {isDraw && <em className="animate-appear-mark">Draw!</em>}
           {winner && <p>The winner is: {winner} </p>}
         </div>
@@ -54,14 +66,27 @@ export const Main = () => {
       <div className="flex flex-col gap-1">
         {board.map((row, rowIndex) => (
           <div className="flex gap-1">
-            {row.map((cell, colIndex) => (
-              <div
-                className="flex border-2 border-gray-900 size-20 cursor-pointer items-center justify-center text-2xl font-bold"
-                onClick={() => handleClick({ rowIndex, colIndex })}
-              >
-                {cell && <span className="animate-appear-mark">{cell}</span>}
-              </div>
-            ))}
+            {row.map((cell, colIndex) => {
+              const cellCoords = [rowIndex, colIndex];
+              const isWinningCell = getIsWinningCellOrNot(
+                winningCoords,
+                cellCoords
+              );
+              console.log("is winning cell?", isWinningCell, {
+                cellCoords,
+                winningCoords,
+              });
+              return (
+                <div
+                  className={`flex border-2 border-gray-900 size-20 cursor-pointer ${
+                    isWinningCell && "bg-red-500"
+                  } items-center justify-center text-2xl font-bold`}
+                  onClick={() => handleClick({ rowIndex, colIndex })}
+                >
+                  {cell && <span className="animate-appear-mark">{cell}</span>}
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>

@@ -61,7 +61,9 @@ function XhasWon(board: Board): boolean {
 }
 
 export const getGameResult = (board: Board): GameResult=> {
-  let result: GameResult = { winner: null, isDraw: false};
+  let result: GameResult = { winner: null, isDraw: false, winningCoords: [] };
+
+  result.winningCoords = [[0,0], [0,1], [0,2]]; // Example winning coordinates, adjust as needed
   if (XhasWon(board)) {
     result.winner = "X";
   } else if (OhasWon(board)) {
