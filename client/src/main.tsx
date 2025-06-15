@@ -20,7 +20,7 @@ export const Main = () => {
   ]);
 
   const [currentPlayer, setCurrentPlayer] = useState<XorO>("X");
-  const { winner, isDraw, winningCoords } = getGameResult(board);
+  const { winner, isDraw, winningTriple } = getGameResult(board);
 
   const handleResetBoard = () => {
     setBoard([
@@ -41,10 +41,10 @@ export const Main = () => {
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
 
-  function getIsWinningCellOrNot(winningCoords, rowIndex, colIndex) {
-    return winningCoords.some(
-      (winningCoord) =>
-        winningCoord[0] === rowIndex && winningCoord[1] === colIndex
+  function getIsWinningCellOrNot(winningTriple, rowIndex, colIndex) {
+    return winningTriple.some(
+      ([row, col]) =>
+        row === rowIndex && col === colIndex
     );
   }
 
@@ -68,7 +68,7 @@ export const Main = () => {
           <div className="flex gap-1">
             {row.map((cell, colIndex) => {
               const isWinningCell = getIsWinningCellOrNot(
-                winningCoords,
+                winningTriple,
                 rowIndex,
                 colIndex
               );

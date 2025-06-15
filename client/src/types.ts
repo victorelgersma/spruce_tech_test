@@ -4,7 +4,7 @@ export type XorO = 'X' | 'O'
 export interface GameResult {
   winner: XorO | null;
   isDraw: boolean;
-  winningCoords: [number, number][];
+  winningTriple: [number, number][];
 }
 
 

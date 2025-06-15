@@ -1,75 +1,85 @@
 import { Board, GameResult, XorO } from "./types";
 
-type GameStatus = "X" | "O" | "Draw" | "No Winner";
-
 function isBoardFull(board: Board): boolean {
   return board.every((row) => row.every((cell) => cell !== undefined));
 }
 
-function XhasWonInRows(board: Board): boolean {
-  return board.some((row) => row.every((cell) => cell === "X"));
+function getCandidateTriples(i, j, directions) {
+  return directions.map(({ delta_r, delta_c }) => [
+    [i, j],
+    [i + delta_r, j + delta_c],
+    [i + 2 * delta_r, j + 2 * delta_c],
+  ]);
 }
-function OhasWonInRows(board: Board): boolean {
-  return board.some((row) => row.every((cell) => cell === "O"));
+
+/**
+ * Safely get the value of a board cell, returning undefined for any invalid access
+ */
+function safeGetCell(board: Board, rowIndex: number | undefined, colIndex: number | undefined): XorO | undefined {
+  // Check if coordinates are undefined
+  if (rowIndex === undefined || colIndex === undefined) {
+    return undefined;
+  }
+  
+  // Check if row is out of bounds
+  if (rowIndex < 0 || rowIndex >= board.length) {
+    return undefined;
+  }
+  
+  // Check if column is out of bounds
+  if (colIndex < 0 || colIndex >= board[rowIndex].length) {
+    return undefined;
+  }
+  
+  // Now it's safe to access
+  return board[rowIndex][colIndex];
 }
-function XhasWonInColumns(board: Board): boolean {
-  for (let col = 0; col < 3; col++) {
-    if (
-      board[0][col] === "X" &&
-      board[1][col] === "X" &&
-      board[2][col] === "X"
-    ) {
-      return true;
+
+// For checking if winning coordinates are valid:
+function isWinningTriple(triple: [number, number][], board: Board): boolean {
+  const [first, second, third] = triple;
+  const firstCell = safeGetCell(board, first[0], first[1]);
+  
+  return (
+    firstCell !== undefined &&
+    firstCell === safeGetCell(board, second[0], second[1]) &&
+    firstCell === safeGetCell(board, third[0], third[1])
+  );
+}
+
+function findTriple(board: Board) {
+  let winningTriple: [number, number][] | null = null;
+  let XorO: XorO | null = null;
+  const directions = [
+    { delta_r: 1, delta_c: 0 }, // Vertical movement --> row number changes
+    { delta_r: 0, delta_c: 1 }, // Horizontal
+    { delta_r: 1, delta_c: 1 }, // Diagonal \
+    { delta_r: 1, delta_c: -1 }, // Diagonal /
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      const currentCell = board[i][j];
+      const candidateTriples = getCandidateTriples(i, j, directions);
+      const winningTriple = candidateTriples.find((candidateTriple) =>
+        isWinningTriple(candidateTriple, board)
+      );
+      if (winningTriple) {
+        return { winningTriple, XorO: currentCell as XorO };
+      }
     }
   }
-  return false;
-}
-function OhasWonInColumns(board: Board): boolean {
-  for (let col = 0; col < 3; col++) {
-    if (
-      board[0][col] === "O" &&
-      board[1][col] === "O" &&
-      board[2][col] === "O"
-    ) {
-      return true;
-    }
-  }
-  return false;
-}
-function XhasWonInDiagonals(board: Board): boolean {
-  return (
-    (board[0][0] === "X" && board[1][1] === "X" && board[2][2] === "X") ||
-    (board[0][2] === "X" && board[1][1] === "X" && board[2][0] === "X")
-  );
-}
-function OhasWonInDiagonals(board: Board): boolean {
-  return (
-    (board[0][0] === "O" && board[1][1] === "O" && board[2][2] === "O") ||
-    (board[0][2] === "O" && board[1][1] === "O" && board[2][0] === "O")
-  );
-}
-function OhasWon(board: Board): boolean {
-  return (
-    OhasWonInRows(board) || OhasWonInColumns(board) || OhasWonInDiagonals(board)
-  );
+  return { winningTriple: null, XorO: null };
 }
 
-function XhasWon(board: Board): boolean {
-  return (
-    XhasWonInRows(board) || XhasWonInColumns(board) || XhasWonInDiagonals(board)
-  );
-}
+export const getGameResult = (board: Board): GameResult => {
+  let result: GameResult = { winner: null, isDraw: false, winningTriple: [] };
 
-export const getGameResult = (board: Board): GameResult=> {
-  let result: GameResult = { winner: null, isDraw: false, winningCoords: [] };
-
-  result.winningCoords = [[0,0], [0,1], [0,2]]; // Example winning coordinates, adjust as needed
-  if (XhasWon(board)) {
-    result.winner = "X";
-  } else if (OhasWon(board)) {
-    result.winner = "O";
+  const { winningTriple, XorO } = findTriple(board);
+  if (winningTriple) {
+    result.winner = XorO;
+    result.winningTriple = winningTriple;
   } else if (isBoardFull(board)) {
-    result.winner = null;
     result.isDraw = true;
   } 
   return result;
