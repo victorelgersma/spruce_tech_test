@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { XorO, Board } from "./types";
-import { getNewBoard, getGameResult } from "./utils";
+import { getNewBoard, getGameResult, getCurrentPlayer } from "./utils";
 
-//          Column
-//         0   1   2
-//       ┌───┬───┬───┐
-//     0 │   │   │   │
-//   r   ├───┼───┼───┤
-//   o 1 │   │   │   │
-//   w   ├───┼───┼───┤
-//     2 │   │   │   │
-//       └───┴───┴───┘
 
 function createBoard({ size }): Board {
   // returns a nested 2D array of size `size x size`
@@ -20,8 +11,9 @@ function createBoard({ size }): Board {
 export const Main = () => {
   const [preferredSize, setPreferredSize] = useState(3);
   const [board, setBoard] = useState<Board>(createBoard({ size: 3 }));
-  const [currentPlayer, setCurrentPlayer] = useState<XorO>("X");
   const { winner, isDraw, winningTriple } = getGameResult(board);
+  const startingPlayer = 'X'
+  const currentPlayer = getCurrentPlayer(board, startingPlayer);
 
   const handleResetBoard = () => {
     if (preferredSize < 3 || preferredSize > 15) {
@@ -29,7 +21,6 @@ export const Main = () => {
       return;
     }
     setBoard(createBoard({ size: preferredSize }));
-    setCurrentPlayer("X");
   };
 
   const handlePlay = ({ rowIndex, colIndex }) => {
@@ -39,7 +30,6 @@ export const Main = () => {
     const oldBoard = board;
     const newBoard = getNewBoard(oldBoard, rowIndex, colIndex, currentPlayer);
     setBoard(newBoard);
-    setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
 
   function getIsWinningCellOrNot(winningTriple, rowIndex, colIndex) {
@@ -55,12 +45,11 @@ export const Main = () => {
   };
 
   return (
-    <div className={`flex flex-col mt-10 items-center gap-10`}>
-      <div className="font-bold border-black border-2 px-4 py-2 text-2xl">
+    <div className={`flex text-gray-600 flex-col mt-10 items-center gap-10`}>
+      <h1 className="font-bold border-black border-2 px-4 py-2 text-2xl">
         Tic Tac Toe
-      </div>
+      </h1>
       <div className="h-20">
-        {/* Fixed height status container */}
         <div className="h-8 flex items-center text-3xl font-bold justify-center mb-6">
           {!winner && !isDraw && <p>{currentPlayer} to play</p>}
           {isDraw && <em className="animate-appear-mark">Draw!</em>}

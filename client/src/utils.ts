@@ -91,3 +91,29 @@ export const getNewBoard = (oldBoard : Board, rowIndex : number, columnIndex: nu
   newBoard[rowIndex][columnIndex] = currentPlayer;
   return newBoard;
 };
+
+export const getCurrentPlayer = (board: Board, startingPlayer: XorO ): XorO => {
+  
+  let numberOfX: number = 0
+  let numberOfO: number = 0
+
+  for (let row of board) {
+    for (let tile of row) {
+      if (tile === 'X') {
+        numberOfX += 1
+      } else if (tile === 'O') {
+        numberOfO += 1
+      }
+    }
+  }
+
+  if (Math.abs(numberOfO - numberOfX) > 1) {
+    throw new Error("Invalid board state")
+  } else if (numberOfO > numberOfX) {
+    return 'X'
+  } else if (numberOfX > numberOfO) {
+    return 'O'
+  } else {
+    return startingPlayer
+  }
+}

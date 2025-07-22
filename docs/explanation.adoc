@@ -1,0 +1,85 @@
+= Example Doc
+:source-highlighter: highlight.js
+:highlightjs-theme: monokai
+
+
+== Data structure
+
+//          Column
+//         0   1   2
+//       ┌───┬───┬───┐
+//     0 │   │   │   │
+//   r   ├───┼───┼───┤
+//   o 1 │   │   │   │
+//   w   ├───┼───┼───┤
+//     2 │   │   │   │
+//       └───┴───┴───┘
+
+[source,javascript]
+----
+const board = [
+    ['X', 'O', 'X'],
+    ['X', 'X', 'X'],
+    ['X', 'O', 'O'],
+]
+----
+
+[source,javascript]
+----
+> matrix[0][0] // 'X'
+> matrix[0][1] // 'O'
+> matrix[0][2] // 'O'
+> matrix[1][0] // 'O'
+----
+
+
+== Determining who's turn it is
+
+* we don't want to store this as separate state (source of bugs!)
+* we want this to be determined from the board itself. 
+
+Algorithm:
+
+* count Xs 
+* count Os
+* if they differ by more than 1 we throw an error (catch and restart game?)
+* if there are more Xs than Os, it's Os turn
+* if there are more Os than Xs, it's Xs turn
+* if there are the same amount of Xs and Os, it `startingPlayer`'s turn
+
+[source,javascript]
+----
+export const getCurrentPlayer = (board: Board, startingPlayer: XorO ): XorO => {
+    // to implement
+  return 'X'
+}
+----
+
+[source,javascript]
+----
+export const getCurrentPlayer = (board: Board, startingPlayer: XorO ): XorO => {
+  
+  let numberOfX: number = 0
+  let numberOfO: number = 0
+
+  for (let row of board) {
+    for (let tile of row) {
+      if (tile === 'X') {
+        numberOfX += 1
+      } else if (tile === 'O') {
+        numberOfO += 1
+      }
+    }
+  }
+
+  if (Math.abs(numberOfO - numberOfX) > 1) {
+    throw new Error("Invalid board state")
+  } else if (numberOfO > numberOfX) {
+    return 'X'
+  } else if (numberOfX > numberOfO) {
+    return 'O'
+  } else {
+    return startingPlayer
+  }
+}
+----
