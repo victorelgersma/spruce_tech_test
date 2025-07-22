@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { XorO, Board } from "./types";
 import { getNewBoard, getGameResult, getCurrentPlayer } from "./utils";
+import GameStatus from "./components/GameStatus";
 
 
 function createBoard({ size }): Board {
@@ -50,11 +51,8 @@ export const Main = () => {
         Tic Tac Toe
       </h1>
       <div className="h-20">
-        <div className="h-8 flex items-center text-3xl font-bold justify-center mb-6">
-          {!winner && !isDraw && <p>{currentPlayer} to play</p>}
-          {isDraw && <em className="animate-appear-mark">Draw!</em>}
-          {winner && <p>{winner} wins</p>}
-        </div>
+        <GameStatus winner={winner} isDraw={isDraw} currentPlayer = {currentPlayer} />
+       
       </div>
       <div className="flex flex-col gap-1">
         {board.map((row, rowIndex) => (
