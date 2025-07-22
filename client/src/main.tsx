@@ -39,6 +39,14 @@ export const Main = () => {
     );
   }
 
+  const getFontSize = (boardSize: number) => {
+  if (boardSize <= 5) return 'text-2xl';
+  if (boardSize <= 8) return 'text-xl';
+  if (boardSize <= 12) return 'text-lg';
+  if (boardSize <= 14) return 'text-base';
+  return 'text-xs';
+};
+
   const handleBoardSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value);
     // Can be an invalid value
@@ -54,9 +62,9 @@ export const Main = () => {
         <GameStatus winner={winner} isDraw={isDraw} currentPlayer = {currentPlayer} />
        
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 w-96 h-96">
         {board.map((row, rowIndex) => (
-          <div className="flex gap-1">
+          <div className="flex gap-1 flex-1">
             {row.map((cell, colIndex) => {
               const isWinningCell = getIsWinningCellOrNot(
                 winningTriple,
@@ -65,13 +73,13 @@ export const Main = () => {
               );
               return (
                 <div
-                  className={`flex border-2 bg-white-500 border-gray-900 size-20 cursor-pointer
+                  className={`flex ${getFontSize(board.length)} border-2 bg-white-500 border-gray-900 aspect-square flex-1 cursor-pointer
                   ${
                     ((winner && !isWinningCell) || isDraw) &&
                     "bg-white border-gray-300"
                   }
                   ${isWinningCell && winner && "border-2 bg-green-300"}
-                  items-center justify-center text-2xl font-bold`}
+                  items-center justify-center font-bold`}
                   onClick={() => handlePlay({ rowIndex, colIndex })}
                 >
                   {cell && (

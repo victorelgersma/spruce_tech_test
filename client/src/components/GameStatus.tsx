@@ -6,6 +6,8 @@ interface GameStatusProps {
     isDraw: boolean
     currentPlayer: XorO
 }
+// tells us the game status
+
 export default function GameStatus({ winner, isDraw, currentPlayer }: GameStatusProps) {
     return (
         <div className="h-8 flex items-center text-3xl font-bold justify-center mb-6">
